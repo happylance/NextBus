@@ -19,7 +19,7 @@ predictions=''
 _next_bus () {
     stop_id=$1
     url=https://api.wmata.com/NextBusService.svc/json/jPredictions\?StopID\=$stop_id\&api_key\=$wmata_key
-    predictions=($(curl -s $url | python -m json.tool | sed -n "/$2/,/Minutes/p" | grep "Minutes" | sed 's/.*Minutes": \([0-9]*\),.*/\1/'))
+    predictions=($(curl -s $url | python -m json.tool | sed -n "/\"DirectionText\":.*$2/,/Minutes/p" | grep "Minutes" | sed 's/.*Minutes": \([0-9]*\),.*/\1/'))
 }
 
 next_bus () {
