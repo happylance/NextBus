@@ -39,7 +39,7 @@ next_bus () {
         output=${predictions[0]}
         [ $count -gt 1 ] && output="$output ${predictions[1]}"
         echo -ne "$output   \r"
-        [ ${predictions[0]} -le $2 ] && [ ${predictions[0]} -ge $(($2 - 5)) ] && _show_pop_up && return
+        [ ${predictions[0]} -le $2 ] && [ ${predictions[0]} -ge $(($2 - 5)) ] && _show_pop_up && _stop
         sleep 20
     done
 }
