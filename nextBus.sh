@@ -15,7 +15,7 @@ _show_pop_up() {
         osascript -e 'display dialog "Your next bus will be ready soon."' &>/dev/null
     else
         echo "Your next bus will be ready in $1 minutes"
-        exit 1
+        exit 0
     fi
 }
 
