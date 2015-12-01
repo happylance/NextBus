@@ -4,9 +4,19 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 key_file="$DIR/.wmata_key"
 [ -e "$key_file" ] || exit
 
+can_show_pop_up=true
+if [ "$4" == "-s" ]; then
+    can_show_pop_up=false
+fi
+
 wmata_key=$(cat $DIR/.wmata_key)
 _show_pop_up() {
-   osascript -e 'display dialog "Your next bus will be ready soon."' &>/dev/null
+    if $can_show_pop_up; then
+        osascript -e 'display dialog "Your next bus will be ready soon."' &>/dev/null
+    else
+        echo "Your next bus will be ready in $1 minutes"
+        exit 1
+    fi
 }
 
 _stop(){
@@ -38,8 +48,12 @@ next_bus () {
         [ $count -gt 0 ] || _stop
         output=${predictions[0]}
         [ $count -gt 1 ] && output="$output ${predictions[1]}"
-        echo -ne "$output   \r"
-        [ ${predictions[0]} -le $2 ] && [ ${predictions[0]} -ge $(($2 - 5)) ] && _show_pop_up && _stop
+        if $can_show_pop_up; then
+            echo -ne "$output   \r"
+        else
+            echo "$output"
+        fi
+        [ ${predictions[0]} -le $2 ] && [ ${predictions[0]} -ge $(($2 - 5)) ] && _show_pop_up ${predictions[0]} && _stop
         sleep 20
     done
 }
