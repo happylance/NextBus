@@ -22,7 +22,7 @@ _show_pop_up() {
 _stop(){
     [ -t 0 ] && stty sane
     tput cnorm
-    exit
+    exit 1
 }
 
 predictions=''
