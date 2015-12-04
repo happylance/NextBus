@@ -5,8 +5,10 @@ key_file="$DIR/.wmata_key"
 [ -e "$key_file" ] || exit
 
 can_show_pop_up=true
-if [ "$4" == "-s" ]; then
+show_debug_info=false
+if [[ "$4" == "-s" || "$4" == "-d" ]]; then
     can_show_pop_up=false
+    [[ "$4" == "-d" ]] && show_debug_info=true
 fi
 
 wmata_key=$(cat $DIR/.wmata_key)
@@ -15,6 +17,7 @@ _show_pop_up() {
         osascript -e 'display dialog "Your next bus will be ready soon."' &>/dev/null
     else
         echo "Your next bus will be ready in $1 minutes"
+        $show_debug_info && curl -s $url
         exit 0
     fi
 }
@@ -22,6 +25,7 @@ _show_pop_up() {
 _stop(){
     [ -t 0 ] && stty sane
     tput cnorm
+    $show_debug_info && curl -s $url
     exit 1
 }
 
