@@ -4,27 +4,49 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 key_file="$DIR/.wmata_key"
 [ -e "$key_file" ] || exit
 
-can_show_pop_up=true
+can_show_pop_up=false
 show_debug_info=false
-if [[ "$4" == "-s" || "$4" == "-d" ]]; then
-    can_show_pop_up=false
-    [[ "$4" == "-d" ]] && show_debug_info=true
-fi
+while getopts s:t:d:r:pi opt; do
+    case $opt in
+        s) 
+            stop_id=$OPTARG;;
+        t)
+            alert_time=$OPTARG;;
+        d) 
+            destination=$OPTARG;;
+        r)
+            route=$OPTARG;;
+        p)
+            can_show_pop_up=true;;
+        i)
+            show_debug_info=true;;
+        ?)
+            exit 5;
+    esac
+done
 
 wmata_key=$(cat $DIR/.wmata_key)
+
+_restore_cursor () {
+    [ -t 0 ] && stty sane
+    tput cnorm
+}
 _show_pop_up() {
+    message="Next $route in $1 minutes"
     if $can_show_pop_up; then
-        osascript -e 'display dialog "Your next bus will be ready soon."' &>/dev/null
+        osascript -e << EOF &>/dev/null
+        display dialog "$message"
+EOF
     else
-        echo "Your next bus will be ready in $1 minutes"
+        echo "$message"
         $show_debug_info && curl -s $url
+        _restore_cursor
         exit 0
     fi
 }
 
 _stop(){
-    [ -t 0 ] && stty sane
-    tput cnorm
+    _restore_cursor
     $show_debug_info && curl -s $url
     exit 1
 }
@@ -62,5 +84,5 @@ next_bus () {
     done
 }
 
-next_bus $1 $2 "$3"
+next_bus $stop_id $alert_time "$destination"
 
