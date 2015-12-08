@@ -32,9 +32,9 @@ _restore_cursor () {
     tput cnorm
 }
 _show_pop_up() {
-    message="Next $route in $1 minutes"
+    message="Next $route is in $1 minutes"
     if $can_show_pop_up; then
-        osascript -e << EOF &>/dev/null
+        osascript << EOF &>/dev/null
         display dialog "$message"
 EOF
     else
