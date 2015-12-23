@@ -54,6 +54,7 @@ EOF
 }
 
 _stop(){
+    $exit_immediately && exit 0
     _restore_cursor
     $show_debug_info && curl -s $url
     exit 1
@@ -67,14 +68,14 @@ _next_bus () {
 }
 
 next_bus () {
-    tput civis # Hide cursor
-
-    # Do not echo input from stdin
-    [ -t 0 ] && stty -echo -icanon -icrnl time 0 min 0
-    # Handle ctrl-c and ctrl-z gracefully.
-    trap "_stop" SIGINT
-    trap "" SIGTSTP   
-
+    if ! $exit_immediately; then
+        # Do not echo input from stdin
+        tput civis # Hide cursor
+        [ -t 0 ] && stty -echo -icanon -icrnl time 0 min 0
+        # Handle ctrl-c and ctrl-z gracefully.
+        trap "_stop" SIGINT
+        trap "" SIGTSTP   
+    fi
 
     while true; do
         _next_bus $1 "$3"
@@ -87,8 +88,8 @@ next_bus () {
         else
             echo "$output"
         fi
+        $exit_immediately && exit 0
         [ ${predictions[0]} -le $2 ] && [ ${predictions[0]} -ge $(($2 - 5)) ] && _show_pop_up ${predictions[0]} && _stop
-        $exit_immediately && _stop
         sleep 20
     done
 }
