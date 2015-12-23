@@ -6,7 +6,9 @@ key_file="$DIR/.wmata_key"
 
 can_show_pop_up=false
 show_debug_info=false
-while getopts s:t:d:r:pi opt; do
+exit_immediately=false
+verbose=false
+while getopts s:t:d:r:piev opt; do
     case $opt in
         s) 
             stop_id=$OPTARG;;
@@ -20,10 +22,16 @@ while getopts s:t:d:r:pi opt; do
             can_show_pop_up=true;;
         i)
             show_debug_info=true;;
+        e)
+            exit_immediately=true;;
+        v)
+            verbose=true;;
         ?)
             exit 5;
     esac
 done
+
+$verbose && set -x
 
 wmata_key=$(cat $DIR/.wmata_key)
 
@@ -80,6 +88,7 @@ next_bus () {
             echo "$output"
         fi
         [ ${predictions[0]} -le $2 ] && [ ${predictions[0]} -ge $(($2 - 5)) ] && _show_pop_up ${predictions[0]} && _stop
+        $exit_immediately && _stop
         sleep 20
     done
 }
