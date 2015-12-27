@@ -10,5 +10,5 @@ header="api_key:$wmata_key"
 if [ -z "$2" ]; then
     curl $url -s -H "$header" | python -m json.tool | grep -e Name -e DirectionText 
 else
-    curl $url -s -H "$header" | python -m json.tool | grep -e StopID -e Name -e DirectionText | sed -n "/$2/{N;p};/DirectionText/p"
+    curl $url -s -H "$header" | python -m json.tool | grep -e StopID -e Name -e DirectionText | sed -n "/$2/{N;p;};/DirectionText/p"
 fi
