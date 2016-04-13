@@ -43,7 +43,7 @@ _show_pop_up() {
     message="Next $route is in $1 minutes"
     if $can_show_pop_up; then
         osascript << EOF &>/dev/null
-        tell application "Finder"
+        tell application "Terminal"
         activate
         display dialog "$message"
         end tell
