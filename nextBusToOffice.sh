@@ -1,5 +1,8 @@
 #!/bin/bash
 
+tookBusTime=$(tail -1 "$HOME/logs/tookBusTime.log")
+[ $(date +%s) -lt $(($tookBusTime + 3600)) ] && exit 0
+
 nextBusToOffice=$($HOME/dev/NextBus/3T.sh -e "$@")
 [ -z "$nextBusToOffice" ] && { echo "没有收到下趟车的信息"; exit 0; }
 

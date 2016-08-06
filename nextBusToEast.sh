@@ -1,6 +1,9 @@
 #!/bin/bash
 
 set -e
+tookBusTime=$(tail -1 "$HOME/logs/tookBusTime.log")
+[ $(date +%s) -lt $(($tookBusTime + 3600)) ] && exit 0
+
 nextBusToEast=$($HOME/dev/NextBus/3THomeEast.sh -e "$@")
 [ -z "$nextBusToEast" ] && { echo "没有收到下趟车的信息" ; exit 0; }
 
