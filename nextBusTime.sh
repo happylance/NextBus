@@ -7,7 +7,7 @@ tookBusTime=$(tail -1 "$HOME/logs/tookBusTime.log")
 [ $(date +%a) == "Sat" ] && isSat=true
 
 if [ "$isSat" = true ] ; then
-    if ["$isPM" = true ]; then
+    if [ "$isPM" = true ]; then
         script="3TP10"
     else
         script="3THomeEast"
